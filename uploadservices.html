@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <form action="">
+            <div class="col-sm-6">
+                <select name="" id="servicetp">
+
+                </select>
+            </div>
+            <div class="col-sm-6"><input type="text" placeholder="ownername" id="ownername"></div>
+            <div class="col-sm-6"><input type="text" placeholder="Email" id="Email"></div>
+            <div class="col-sm-6">
+                <label for="">State</label>
+                <select name="" id="statetbl" onchange="getdistrict(this.value)">State</select>
+            </div>
+            <div class="col-sm-6">
+                <select name="" id="distdricttbl">District</select>
+            </div>
+            <div class="col-sm-6">
+                <!-- The image container -->
+                <div id="imageContainer"></div>
+
+            </div>
+        </form>
+    </div>
+</body>
+<script>
+    $(document).ready(function () {
+        GetType();
+        GetState();
+        GetImages();
+        userReg();
+    })
+
+    function GetType() {
+        var url = "https://localhost:44342/WebService1.asmx/FetchServiceType";
+        $.ajax({
+            url: url,
+            method: "GET",
+            dataType: "xml",
+            success: function (data) {
+
+
+                var jsonString = $(data).find('string').text();
+
+                var jsonResponse = JSON.parse(jsonString);
+
+                var servicetype = jsonResponse.response;
+
+
+                var selectElemt = document.getElementById("servicetp")
+                for (var i = 0; i < servicetype.length; i++) {
+
+                    var state = servicetype[i];
+                    var option = document.createElement("option");
+                    option.value = state.ServiceID;
+                    option.text = state.ServiceType;
+
+
+                    // Append the option to the select element
+                    selectElemt.appendChild(option);
+                }
+
+
+            }
+        })
+    }
+
+
+    function GetState() {
+        var url = "https://localhost:44342/WebService1.asmx/FetchState";
+
+        $.ajax({
+            url: url,
+            method: "GET",
+            dataType: "xml",
+            success: function (data) {
+
+
+                var jsonString = $(data).find('string').text();
+
+                var jsonResponse = JSON.parse(jsonString);
+
+                var StateResponse = jsonResponse.Response;
+
+
+                var selectElemt = document.getElementById("servicetp")
+                for (var i = 0; i < StateResponse.length; i++) {
+
+                    var state = StateResponse[i];
+                    var option = document.createElement("option");
+                    option.value = state.StateId;
+                    option.text = state.State;
+
+                    var selectElemt = document.getElementById("statetbl")
+
+                    // Append the option to the select element
+                    selectElemt.appendChild(option);
+                }
+
+
+            }
+        })
+    }
+
+
+    function getdistrict(obj) {
+
+        var url = "https://localhost:44342/WebService1.asmx/FetchDistrict";
+        var selectElemt = document.getElementById("distdricttbl").innerHTML="";
+        var parameter = {
+            id: obj
+        }
+
+        $.ajax({
+            url: url,
+            data: parameter,
+            method: "Post",
+            dataType: "xml",
+            success: function (data) {
+                console.log(data);
+
+                var jsonString = $(data).find('string').text();
+                console.log(jsonString);
+                var jsonResponse = JSON.parse(jsonString);
+                console.log(jsonResponse);
+                var StateResponse = jsonResponse.Response;
+                console.log(StateResponse[0]);
+
+                var selectElemt = document.getElementById("servicetp")
+                for (var i = 0; i < StateResponse.length; i++) {
+
+                    var state = StateResponse[i];
+                    var option = document.createElement("option");
+                    option.value = state.DistrictID;
+                    option.text = state.DistrictName;
+
+                    var selectElemt = document.getElementById("distdricttbl")
+
+                    // Append the option to the select element
+                    selectElemt.appendChild(option);
+                }
+
+
+            }
+        })
+    }
+
+
+
+    function GetImages(obj) {
+        var url = "https://localhost:44342/WebService1.asmx/GetImage";
+
+        var parameter = {
+            imageName: "1.jpeg"
+        }
+
+        $.ajax({
+            url: url,
+            data: parameter,
+            method: "Get",
+            dataType: "xml",
+            success: function (data) {
+                console.log(data);
+
+                var jsonString = $(data).find('base64Binary').text();
+                console.log(jsonString);
+                // Create an image element
+                var img = document.createElement("img");
+                // Set the source attribute to the base64 data
+                img.src = "data:image/png;base64," + jsonString;
+                img.height = 150;
+                img.width = 100;
+                // Append the image element to the container
+                document.getElementById("imageContainer").appendChild(img);
+
+            }
+        })
+    }
+
+
+
+function userReg() {
+var url = "https://localhost:44342/WebService1.asmx/UserRegistration";
+var selectElemt = document.getElementById("distdricttbl").innerHTML="";
+var parameter = {
+    name: "Niranjan",
+    file:"nir.png"
+}
+
+$.ajax({
+    url: url,
+    data: parameter,
+    method: "Post",
+    dataType: "xml",
+    success: function (data) {
+        console.log(data);
+
+        var jsonString = $(data).find('string').text();
+        console.log(jsonString);
+    }
+})
+}
+
+
+
+</script>
+
+</html>

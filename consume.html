@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Request Example</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+
+<body>
+
+
+    <form action="">
+        <div class="container">
+            <input type="text" id="name">
+            <input type="file" id="file">
+            <input type="button" id="btn" value="Submit" onclick="userReg()">
+        </div>
+    </form>
+
+</body>
+<script>
+
+
+    function userReg() {
+        debugger;
+        var name = $('#name').val();
+        var file = $('#file').val()
+        var url = "https://localhost:44342/WebService1.asmx/UserRegistration";
+        var parameter = {
+            name: name,
+            file: file
+        };
+
+        $.ajax({
+            url: url,
+            data: parameter,
+            method: "Post",
+            dataType: "xml",
+            success: function (data) {
+                console.log(data);
+
+                var jsonString = $(data).find('string').text();
+                console.log(jsonString);
+            }
+        })
+    }
+
+
+
+
+
+
+</script>
+
+</html>
